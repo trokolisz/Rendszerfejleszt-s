@@ -3,21 +3,22 @@ from django.shortcuts import render
 from .models import Topic, TopicType, Comment, User
 
 def index(request):
-    user_id= request.GET.get('user', -1)
+    username= request.GET.get('user', -1)
     password = request.GET.get('pass', -1)
-    if user_id in [-1, ''] or password in [-1, ''] :
-         return render(request, 'login.html')
+    
+    if username in [-1, ''] or password in [-1, ''] :
+        return render(request, 'login.html')
     try:
         #user_id=int(user_id)
         
-            users = User.objects.get(username=user_id)
+            User.objects.get(username=username, password=password)
         
     except:
-        users = 1
+        return render(request, 'login.html')
         
     #return HttpResponse((users, password))
     #comments = Comment.objects.all()
-    topics =  Topic.objects.filter()
+    topics =  Topic.objects.all()
     
     topic_types = TopicType.objects.all()
     return render(request, 'index.html', {'topics': topics, "topic_types":topic_types})
