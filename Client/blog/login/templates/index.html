@@ -1,22 +1,53 @@
-{% extends "base.html" %} {%block content%}
-<h1>Logins</h1>
+{% extends "base.html" %} {% block content %}
+<script>
+  // Get the text from the URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const textFromInput = urlParams.get("user");
 
-<div class="row">
-  {% for login in logins%}
-  <div class="col">
-    <div class="card" style="width: 18rem">
-      <img src="..." class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">{{login.name}}</h5>
-        <p class="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
-        </p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
+  console.log(textFromInput);
+</script>
+
+<div class="container text-center">
+  <div class="row">
+    <div class="col">
+      <input type="button" value="You got a new message">
     </div>
-    {% endfor %}
+    <div class="col">
+      <input type="button" value="My Comments">
+    </div>
+    <div class="col">
+      <input type="button" value="Favorite Treads">
+    </div>
   </div>
 </div>
 
-{%endblock%}
+<div class="row">
+  <div class="col-4">
+    <div id="list-tab">
+      {% for topic_type in topic_types %}
+      <a
+        class="list-group-item list-group-item-action"
+        id="{{ topic_type.name }}"
+        href="?topic_type={{topic_type.id}}"
+      >
+        {{ topic_type.name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-8">
+    <div id="nav-tabContent">
+      {% for topic in topics %}
+      <div class="card-body">
+        <h5 class="card-title">{{topic.name}}</h5>
+        <small class="right">3 days ago</small>
+        <p class="card-text">{{topic.description}}</p>
+        <a href="#" class="btn btn-primary">Button</a>
+        
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

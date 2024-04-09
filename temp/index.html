@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Page</title>
+</head>
+<body>
+    <input type="text" id="userInput" placeholder="Enter text here">
+    <button onclick="openSecondPage()">Submit</button>
+
+    <script>
+        function openSecondPage() {
+            const userInput = document.getElementById("userInput").value;
+            // Redirect to the second page with the user input
+            window.location.href = "second.html?text=" + encodeURIComponent(userInput);
+        }
+    </script>
+</body>
+</html>

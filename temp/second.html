@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Page</title>
+</head>
+<body>
+    <h1>Text from Input Page:</h1>
+    <p id="displayText"></p>
+
+    <script>
+        // Get the text from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const textFromInput = urlParams.get("text");
+
+        // Display the text
+        document.getElementById("displayText").textContent = textFromInput;
+    </script>
+</body>
+</html>
