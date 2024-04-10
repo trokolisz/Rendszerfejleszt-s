@@ -2,7 +2,7 @@
 Blog
 
 
-Elérhetőség: dani.csehovics@gmail.com
+Elérhetőség: [email](dani.csehovics@gmail.com)
 
 
 Inditása: 
