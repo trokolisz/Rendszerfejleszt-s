@@ -1,6 +1,5 @@
 # Rendszerfejleszt-s
-Blog
-
+## Blog
 
 Elérhetőség: [email](dani.csehovics@gmail.com)
 
