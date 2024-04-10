@@ -23,7 +23,7 @@
 
 <div class="row">
   <div class="col-4">
-    <div id="list-tab">
+    <div id="list-tab" style = "max-height: 100px; overflow-y: scroll; border: solid; border-width:0.2cap;">
       {% for topic_type in topic_types %}
       <a
         class="list-group-item list-group-item-action"
@@ -36,7 +36,7 @@
     </div>
   </div>
   <div class="col-8">
-    <div id="nav-tabContent">
+    <div id="nav-tabContent"style = "max-height: 600px; overflow-y: scroll; border: solid; border-width:0.2cap;">
       {% for topic in topics %}
       <div class="card-body">
         <h5 class="card-title">{{topic.name}}</h5>
@@ -49,5 +49,7 @@
     </div>
   </div>
 </div>
+
+
 
 {% endblock %}

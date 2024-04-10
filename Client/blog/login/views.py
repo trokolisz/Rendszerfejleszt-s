@@ -15,7 +15,7 @@ def index(request):
         
     except:
         return render(request, 'login.html')
-        
+    
     #return HttpResponse((users, password))
     #comments = Comment.objects.all()
     topics =  Topic.objects.all()
