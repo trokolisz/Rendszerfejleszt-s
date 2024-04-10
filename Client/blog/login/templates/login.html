@@ -26,9 +26,10 @@
 
       // Construct the URL without encoding
       const url = `?user=${username}&pass=${password}`;
-
+      const baseUrl = window.location.origin;
+      const newUrl = `${baseUrl}/${url}`
       // Redirect to the URL
-      window.location.href = url;
+      window.location.href = newUrl;
     });
   }
 </script>
