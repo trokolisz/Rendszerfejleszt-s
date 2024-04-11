@@ -63,7 +63,7 @@ def topic(request):
     user_id = user.id
     topics =  Topic.objects.filter(id=get_topic)
     comments = Comment.objects.filter(topic_id=get_topic)
-    return render(request, 'topic.html', {'topic': topics[0], 'comments':comments, 'user_id':user_id})
+    return render(request, 'topic.html', {'topic': topics[0], 'comments':comments, 'user_id':user.id})
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def comment(requests):

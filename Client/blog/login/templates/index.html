@@ -7,28 +7,35 @@
 
   function updateURL(type) {
     // Get the current URL
-    const currentURL = window.location.href;
+
 
     // Construct the new URL
     
-    let str = currentURL.split('?')[0];
-    str = str.slice(0, -1)
-    const newURL = `${str}/?user=${user}&pass=${pass}&type=${type}`;
+    const baseUrl = window.location.origin;
+    const newURL = `${baseUrl}/?user=${user}&pass=${pass}&type=${type}`;
 
     // Redirect to the new URL
     window.location.href = newURL;
   }
   function resterUrl(){
-    const currentURL = window.location.href;
+
 
     // Construct the new URL
     
-    let str = currentURL.split('?')[0];
-    str = str.slice(0, -1)
-    const newURL = `${str}/?user=${user}&pass=${pass}`;
+    const baseUrl = window.location.origin;
+    const newURL = `${baseUrl}/?user=${user}&pass=${pass}`;
 
     // Redirect to the new URL
     window.location.href = newURL;
+  }
+  function open_topic(type_id){
+
+    
+    // Construct the URL without encoding
+    const url = `?user=${user}&pass=${pass}`;
+    const baseUrl = window.location.origin;
+    const newUrl = `${baseUrl}/topic/${url}&topic=${type_id}`
+    window.location.href = newUrl;
   }
 </script>
 
@@ -74,7 +81,7 @@
         <h5 class="card-title">{{topic.name}}</h5>
         <small class="right">3 days ago</small>
         <p class="card-text">{{topic.description}}</p>
-        <a href="#" class="btn btn-outline-primary">Open</a>
+        <a onclick="open_topic({{topic.id}})" class="btn btn-outline-primary">Open</a>
         
       </div>
       {% endfor %}
