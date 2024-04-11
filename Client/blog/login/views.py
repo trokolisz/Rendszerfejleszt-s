@@ -1,8 +1,13 @@
 from django.http import HttpResponse
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+
 from .serializers import CommentSerializer
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Topic, TopicType, Comment, User
+from django.http import JsonResponse
 
 def index(request):
     get_username= request.GET.get('user', -1)
@@ -13,7 +18,7 @@ def index(request):
     try:
         #elenörzi a jelszó username párost
         
-        User.objects.get(username=get_username, password=get_password)
+        my_user = User.objects.get(username=get_username, password=get_password)
         
     except:
         return (login(request=request))
@@ -54,11 +59,23 @@ def topic(request):
         Topic.objects.get(id=get_topic)
     except:
         return index(request=request)
-            
+    user = get_object_or_404(User, username=get_username)
+    user_id = user.id
     topics =  Topic.objects.filter(id=get_topic)
     comments = Comment.objects.filter(topic_id=get_topic)
-    return render(request, 'topic.html', {'topic': topics[0], 'comments':comments})
-
+    return render(request, 'topic.html', {'topic': topics[0], 'comments':comments, 'user_id':user_id})
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def comment(requests):
+    if requests.method == 'GET':
+        comments= Comment.objects.all()
+        serializer = CommentSerializer(comments, many=True)
+        return JsonResponse({'message': serializer.data})
+    if requests.method == 'POST':
+        serializer= CommentSerializer(data=requests.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CommentListCreateView(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
@@ -67,3 +84,16 @@ class CommentListCreateView(generics.ListCreateAPIView):
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    
+    
+def my_api_view(request):
+    if request.method == 'POST':
+        data = request.POST  # Change this to request.body for JSON data
+        # Process the data and return a response
+        return JsonResponse({'message': 'Data received successfully'})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+    
+
+    

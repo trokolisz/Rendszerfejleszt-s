@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/comments/', views.CommentListCreateView.as_view(), name='comment-list-create'),
     # Retrieve, update, and delete a specific comment
     path('api/comments/<int:pk>/', views.CommentRetrieveUpdateDestroyView.as_view(), name='comment-detail'),
+    path('comment/', csrf_exempt(views.comment)),
 ]
