@@ -13,4 +13,5 @@ urlpatterns = [
     # Retrieve, update, and delete a specific comment
     path('api/comments/<int:pk>/', views.CommentRetrieveUpdateDestroyView.as_view(), name='comment-detail'),
     path('comment/', csrf_exempt(views.comment)),
+    path('favorites/', csrf_exempt(views.favorites)),
 ]

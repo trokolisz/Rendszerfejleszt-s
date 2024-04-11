@@ -3,10 +3,10 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
-
+from django.db.models import Q
 from .serializers import CommentSerializer
 from django.shortcuts import render, get_object_or_404
-from .models import Topic, TopicType, Comment, User
+from .models import Topic, TopicType, Comment, User, FavoriteTopic
 from django.http import JsonResponse
 
 def index(request):
@@ -38,6 +38,34 @@ def index(request):
 def login(request):
     return render(request, 'login.html')
 
+
+def favorites(request):
+    get_username= request.GET.get('user', -1)
+    get_password = request.GET.get('pass', -1)
+    get_topic_types =  request.GET.get('type', -1)
+    if get_username in [-1, ''] or get_password in [-1, ''] :
+        return (login(request=request))
+    try:
+        #elenörzi a jelszó username párost
+        
+        my_user = User.objects.get(username=get_username, password=get_password)
+        
+    except:
+        return (login(request=request))
+    
+    #return HttpResponse((username, password))
+    topics =  Topic.objects.all()
+    topic_types = TopicType.objects.all()
+    
+    favorites = FavoriteTopic.objects.filter(user_id=my_user.id)
+    ids = [ids.id for ids in favorites]
+    if get_topic_types in [-1, '']:
+        topics =  Topic.objects.filter(id__in=ids)
+    else: 
+    #   return HttpResponse(get_topic_types)
+        topics =  Topic.objects.filter(Q(type_id=get_topic_types) & Q(id__in=ids))
+    
+    return render(request, 'favorites.html', {'topics': topics, "topic_types":topic_types})
 
 
 

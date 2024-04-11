@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block content %}
 
-<div class="container">
+<div class="container"  style="border: solid;">
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
       <a class="navbar-brand" onclick="home()">{{topic.name}}</a>
@@ -30,8 +30,8 @@
     <div class="form-floating">
       <textarea
         class="form-control disabled"
-        placeholder="description"
-        id="floatingTextarea2"
+        placeholder="ta_description"
+        id="description"
         style="height: auto; resize: none"
         readonly
       >
@@ -91,7 +91,7 @@
         <textarea
           class="form-control"
           placeholder="Leave a comment here"
-          id="floatingTextarea2"
+          id="ta_comment"
           style="height: 50px; resize: none"
         ></textarea>
         <label for="floatingTextarea2">Write Comment</label>
@@ -114,7 +114,7 @@
 
   }
   const myUserId = {{user_id}}; // Store the user ID in a JavaScript variable
-  console.log(`User ID: ${myUserId}`);
+
     // Function to handle form submission
   function formatDateToISO() {
     const currentDate = new Date();
@@ -127,10 +127,10 @@
   }
 
 
-  
+
 
   function PostForm() {
-    const commentText = document.getElementById("floatingTextarea2").value;
+    const commentText = document.getElementById("ta_comment").value;
     const jsonData = {
       body: commentText,
       timestamp: formatDateToISO(),

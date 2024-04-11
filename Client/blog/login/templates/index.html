@@ -37,6 +37,12 @@
     const newUrl = `${baseUrl}/topic/${url}&topic=${type_id}`
     window.location.href = newUrl;
   }
+  function open_favorite(){
+    const url = `?user=${user}&pass=${pass}`;
+    const baseUrl = window.location.origin;
+    const newUrl = `${baseUrl}/favorites/${url}`
+    window.location.href = newUrl;
+  }
 </script>
 
 <div class="container text-center">
@@ -48,7 +54,7 @@
       <input type="button" value="My Comments">
     </div>
     <div class="col">
-      <input type="button" value="Favorite Treads">
+      <input type="button" onclick="open_favorite()" value="Favorite Treads">
     </div>
   </div>
 </div>
