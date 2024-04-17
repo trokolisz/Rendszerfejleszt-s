@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/comments/<int:pk>/', views.CommentRetrieveUpdateDestroyView.as_view(), name='comment-detail'),
     path('comment/', csrf_exempt(views.comment)),
     path('favorites/', csrf_exempt(views.favorites)),
+    path('api/favorites/', views.FavoriteListCreateView.as_view(), name='favorite-list-create'),
 ]

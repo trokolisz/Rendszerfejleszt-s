@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from django.db.models import Q
-from .serializers import CommentSerializer
+from .serializers import CommentSerializer, FavoriteSerializer
 from django.shortcuts import render, get_object_or_404
 from .models import Topic, TopicType, Comment, User, FavoriteTopic
 from django.http import JsonResponse
@@ -112,8 +112,13 @@ class CommentListCreateView(generics.ListCreateAPIView):
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+
+class FavoriteListCreateView(generics.ListCreateAPIView):
+    queryset = FavoriteTopic.objects.all()
+    serializer_class = FavoriteSerializer
     
-    
+  
 def my_api_view(request):
     if request.method == 'POST':
         data = request.POST  # Change this to request.body for JSON data

@@ -21,7 +21,7 @@
             <a class="nav-link" aria-current="page">{{topic.type_id}}</a>
           </li>
         </ul>
-        <button class="btn btn-outline-success" type="submit">Favorite</button>
+        <button class="btn btn-outline-success" onclick="callFavorite()" type="submit">Favorite</button>
       </div>
     </div>
   </nav>
@@ -115,6 +115,34 @@
   }
   const myUserId = {{user_id}}; // Store the user ID in a JavaScript variable
 
+  function callFavorite() {
+    
+    const jsonData = {
+      user_id: myUserId,
+      topic_id: {{topic.id}},
+    };
+    const csrftoken = getCookie('csrftoken');
+    // Send the JSON data to the specified URL
+    const baseUrl = window.location.origin;
+    fetch(`${baseUrl}/api/favorites/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Favorite added successfully!");
+        } else {
+          console.error("Error adding favorite:", response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred:", error);
+      });
+  }
     // Function to handle form submission
   function formatDateToISO() {
     const currentDate = new Date();
