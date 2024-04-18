@@ -8,6 +8,8 @@ from django.shortcuts import redirect
 from django.db.models import Q
 from celery import shared_task
 from django.core.mail import send_mail
+import time
+from django.contrib.auth.models import User
 
 def logout_view(request):
     logout(request)
@@ -99,3 +101,24 @@ class TopicTypeViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         return TopicType.objects.all()
+    
+@shared_task
+def watch_topic_task(topic_id):
+    topic = Topic.objects.get(pk=topic_id)
+    last_count = topic.posts.count()
+
+    while True:
+        time.sleep(1)  # Wait for a while before checking again
+        current_count = topic.posts.count()
+
+        if current_count > last_count:
+            users = User.objects.filter(is_watching_topic=topic)
+            for user in users:
+                send_mail(
+                    'New post in watched topic',
+                    'A new post has been added to the topic you\'re watching.',
+                    'from@example.com',
+                    [user.email],
+                    fail_silently=False,
+                )
+            last_count = current_count
