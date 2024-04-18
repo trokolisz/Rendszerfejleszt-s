@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="col-11" style="margin: 10px">
+    <div class="row" id="add_favorite">
+        <h3 class= "col-10">{{topic.name}}</h3>
+        {% if favorite_topics %}
+            <button type="button" class="btn btn-outline-primary col-2" onclick="deleteFavoriteTopic({{ user.id }}, {{ topic.id }})">Unfavorite Topic</button>
+        {% else %}
+            <button type="button" class="btn btn-outline-primary col-2" onclick="postFavoriteTopic({{ user.id }}, {{ topic.id }})">Favorite Topic</button>
+        {% endif %}
+    </div>
+  <div class="form-floating">
+    <textarea
+      class="form-control disabled"
+      placeholder="ta_description"
+      id="description"
+      style="height: auto; resize: none"
+      readonly
+    >
+            {{topic.description}}
+        </textarea
+    >
+  </div>
+</div>
+<div class="col-12" style="margin: 10px">
+  <div
+    id="nav-tabContent"
+    class="col-13, mb-12"
+    style="
+      max-height: 40cap;
+      margin-right: 2cap;
+      overflow-y: scroll;
+      overflow-x: auto;
+      border: solid;
+      border-width: 0.2cap;
+    "
+  ></div>
+
+  <form method="post" , id="comment-form" style="margin: 10px">
+    {% csrf_token %}
+    <div class="col-11">
+      <div class="form-floating">
+        <textarea
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="ta_comment"
+          style="
+            height: 50px;
+            resize: none;
+            margin-top: 0.5cap;
+            margin-left: 0.5cap;
+          "
+        ></textarea>
+        <label for="floatingTextarea2">Write Comment</label>
+      </div>
+    </div>
+    <div>
+      <button type="button" id="post-btn" onclick="post_comment({{user.id}},{{topic.id}})">Post</button>
+    </div>
+  </form>
+</div>
+<script>
+
+  get_comments({{topic.id}});
+  function get_comments(topic_id){
+          let url = '/api/comments?topic_id=' + topic_id;
+          fetch(url)
+          .then(response => response.json())
+          .then(data => {
+                  let commentsHTML = '';
+                  data.forEach(comment => {
+                          commentsHTML += `
+                                  <div class="card-body container-sm mb-13" style="border: solid;width: auto ; border-width:0.1cap; margin: 0.4cap; padding: 0.5cap;">
+                                          <div class="row col-11">
+                                                  <div class="col-10" style="display: flex; flex-direction: row; align-items: center">
+                                                          <h5 class="card-title">${comment.username}</h5>
+                                                  </div>
+                                                  <div class="col-2">
+                                                          <small class="right">${comment.timestamp}</small>
+                                                  </div>
+                                          </div>
+                                          <div class="col-10">
+                                                  <p class="card-text">${comment.body}</p>
+                                          </div>
+                                  </div>
+                          `;
+                  });
+                  document.getElementById("nav-tabContent").innerHTML = commentsHTML;
+          })
+          .catch(error => {
+                  console.error('Error:', error);
+          });
+
+  }
+
+function post_comment(user, topic) {
+    
+    const body = document.getElementById('ta_comment').value;
+    const url = '/api/comments/';  // replace with your actual API endpoint
+    const data = { user, topic, body };
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(url, {
+            method: 'POST',
+            headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    // Include any other headers your API requires, such as an authentication token
+            },
+            body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .then(() => {
+        setTimeout(() => {
+            get_comments(topic);
+        }, 500); // wait for 1 second before calling get_comments
+    })
+    .catch((error) => {
+            console.error('Error:', error);
+    });
+}
+
+
+// Call the function to post a comment
+
+function deleteFavoriteTopic(userId, topicId) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const url = `/api/favorite_topics/${topicId}/`;  // replace with your actual API endpoint
+    const data = { user: userId, topic: topicId };    
+
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            // Include any other headers your API requires, such as an authentication token
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log(response);
+        document.getElementById('add_favorite').innerHTML = `
+            <h3 class= "col-10">{{topic.name}}</h3>
+            <button type="button" class="btn btn-outline-primary col-2" onclick="postFavoriteTopic(${userId}, ${topicId})">Favorite Topic</button>
+        `;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+function postFavoriteTopic(userId, topicId) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const url = '/api/favorite_topics/';  // replace with your actual API endpoint
+    const data = { user: userId, topic: topicId };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+            // Include any other headers your API requires, such as an authentication token
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log(response);
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        document.getElementById('add_favorite').innerHTML = `
+            <h3 class= "col-10">{{topic.name}}</h3>
+            <button type="button" class="btn btn-outline-primary col-2" onclick="deleteFavoriteTopic(${userId}, ${topicId})">Unfavorite Topic</button>
+        `;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+</script>
+{% endblock %}

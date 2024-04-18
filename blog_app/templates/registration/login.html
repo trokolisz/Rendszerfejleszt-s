@@ -1,0 +1,22 @@
+{% if user.is_authenticated %}
+    <p>You are already logged in.</p>
+    <a href="{% url 'logout' %}">Log out</a>
+    <br>
+    <a href="{% url 'index' %}">Continue</a>
+{% else %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {{ form.username }}
+        <span class="error">{{ form.username.errors }}</span> <!-- Customize the error message here -->
+        <br>
+        {{ form.password.errors }}
+        <label for="{{ form.password.id_for_label }}">Password:</label>
+        {{ form.password }}
+        <span class="error">{{ form.password.errors }}</span> <!-- Customize the error message here -->
+        <br>
+        {% comment %} <input type="hidden" name="next" value="{% url 'index' %}"> {% endcomment %}
+        <button type="submit">Login</button>
+    </form>
+{% endif %}

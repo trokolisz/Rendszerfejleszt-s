@@ -1,0 +1,103 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="row" style="margin-top: 3cap">
+  <div class="col-4">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">Tags:</div>
+        <div class="col-6">
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onclick="get_comments()"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="list-tab"
+        style="
+          max-height: 100px;
+          overflow-y: scroll;
+          border: solid;
+          border-width: 0.2cap;
+        "
+      ></div>
+    </div>
+  </div>
+  <div class="col-8">
+    <div
+      class="card-body container-sm mb-2"
+      id="comment_div"
+      style="border: solid; width: auto; border-width: 0.1cap; padding: 0.5cap"
+    >
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  get_type();
+
+  function get_type() {
+    fetch("/api/topic_type")
+      .then((response) => response.json())
+      .then((data) => {
+        let typesHTML = "";
+        data.forEach((type) => {
+          typesHTML += `
+                <a
+                class="list-group-item list-group-item-action"
+                id="${type.name}"
+                onclick="get_comments(${type.id})"
+                >
+                ${type.name}
+                </a>
+            `;
+        });
+        document.getElementById("list-tab").innerHTML = typesHTML;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+  get_comments();
+  function get_comments(type=null) {
+    let url = "/api/comments/";
+    url += "?user={{ user.id }}";
+        if (type) {
+        url += '&type_id=' + type;
+        }
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            let commentHTML = "";
+            data.forEach((comment) => {
+             
+                    commentHTML += `
+                    <div class="row col-11">
+                            <div
+                            class="col-10"
+                            style="display: flex; flex-direction: row; align-items: center"
+                            >
+                            <h5 class="card-title">${comment.topic_name}</h5>
+                            </div>
+                            <div class="col-2">
+                            <small class="right">${comment.timestamp}</small>
+                            </div>
+                    </div>
+                    <div class="col-10">
+                            <p class="card-text">${comment.body}</p>
+                    </div>
+                    `;
+            });
+            
+            document.getElementById("comment_div").innerHTML = commentHTML;
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="row" style="margin-top: 3cap">
+  <div class="col-4">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">Tags:</div>
+        <div class="col-6">
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onclick="get_topics()"
+          ></button>
+        </div>
+      </div>
+      <div
+        id="list-tab"
+        style="
+          max-height: 100px;
+          overflow-y: scroll;
+          border: solid;
+          border-width: 0.2cap;
+        "
+      ></div>
+    </div>
+  </div>
+  <div class="col-8">
+    <div
+      class="card-body container-sm mb-2"
+      id="topic_div"
+      style="border: solid; width: auto; border-width: 0.1cap; padding: 0.5cap"
+    >
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  get_type();
+
+  function get_type() {
+    fetch("/api/topic_type")
+      .then((response) => response.json())
+      .then((data) => {
+        let typesHTML = "";
+        data.forEach((type) => {
+          typesHTML += `
+                <a
+                class="list-group-item list-group-item-action"
+                id="${type.name}"
+                onclick="get_topics(${type.id})"
+                >
+                ${type.name}
+                </a>
+            `;
+        });
+        document.getElementById("list-tab").innerHTML = typesHTML;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+}
+    get_topics();
+    const favorites = get_favorites();
+    function get_favorites(){
+        let url = '/api/favorite_topics/?user_id={{user.id}}';
+        let fav_topics = [];
+        fetch(url)
+        .then(response => response.json())
+        .then(data =>{
+            data.forEach(
+                fav_top => {
+                    fav_topics.push(fav_top.topic);
+
+                }
+            )
+        })
+        {% comment %} .then(
+            console.log(fav_topics)
+        ) {% endcomment %}
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        return fav_topics;
+    }
+
+    function get_topics(type=null) {
+        
+        let url = '/api/topics';
+        if (type) {
+        url += '?topic_type=' + type;
+        }
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            let filteredData = data.filter(topic => favorites.includes(topic.id));
+            let topicsHTML = '';
+            filteredData.forEach(topic => {
+            topicsHTML += `
+                <div class="card-body container-sm" style="border: solid;width: auto ; border-width:0.1cap; margin: 0.4cap; padding: 0.5cap;">
+                <h5 class="card-title">${topic.name}</h5>
+                <small class="right">3 days ago</small>
+                <p class="card-text">${topic.description}</p>
+                <a onclick="open_topic(${topic.id})" class="btn btn-outline-primary">Open</a>
+                </div>
+            `;
+            document.getElementById("topic_div").innerHTML = topicsHTML;
+        });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    function open_topic(topic_id) {
+        window.location.href = `/topic/?id=${topic_id}`;
+    }
+
+</script>
+
+{% endblock %}
