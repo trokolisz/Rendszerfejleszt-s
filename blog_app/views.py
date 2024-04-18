@@ -6,6 +6,8 @@ from .serializers import FavoriteTopicSerializer, TopicSerializer, TopicTypeSeri
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.db.models import Q
+from celery import shared_task
+from django.core.mail import send_mail
 
 def logout_view(request):
     logout(request)
