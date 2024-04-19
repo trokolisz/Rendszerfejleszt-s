@@ -9,7 +9,9 @@
 Terminálrol:
 
 ```
-$python "<PathToFolder>\manage.py" runserver
+$ cd <PathToFolder>
+$ .\.venv\Scripts\activate    
+$ python "\manage.py" runserver
 ```
 
 majd a kapott temp url-en keresztül lehet csatlakozni a böngészőből
