@@ -8,20 +8,33 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 class TopicConsumer(AsyncWebsocketConsumer):
+    # Called when the websocket is handshaking as part of the connection process.
     async def connect(self):
+        # Get the topic name from the URL
         self.topic_name = self.scope['url_route']['kwargs']['topic_name']
-        self.topic_group_name = f'topic_{self.topic_name}'
+        self.topic_group_name = 'topic_%s' % self.topic_name
 
-        # Join the group
+        # Join the topic group
         await self.channel_layer.group_add(
             self.topic_group_name,
             self.channel_name
         )
 
+        # Accept the websocket connection
         await self.accept()
 
+        # Announce the new user to everyone in the topic group
+        await self.channel_layer.group_send(
+            self.topic_group_name,
+            {
+                'type': 'user_join',
+                'username': 'New User'
+            }
+        )
+
+    # Called when the websocket closes for any reason.
     async def disconnect(self, close_code):
-        # Leave the group
+        # Leave the topic group
         await self.channel_layer.group_discard(
             self.topic_group_name,
             self.channel_name
@@ -50,14 +63,11 @@ class TopicConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-@receiver(post_save, sender=Topic)
-def announce_new_comment(sender, instance, created, **kwargs):
-    if created:
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f'topic_{instance.name}', 
-            {
-                'type': 'chat_message',
-                'message': get_comments()
-            }
-        )
+    # Receive user join event from room group
+    async def user_join(self, event):
+        username = event['username']
+
+        # Send join message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': f'{username} has joined the topic.'
+        }))

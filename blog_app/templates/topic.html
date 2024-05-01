@@ -60,6 +60,30 @@
   </form>
 </div>
 <script>
+  const topic_Name = "Travel Destinations";
+  var socket = new WebSocket('ws://http://127.0.0.1:8000/ws/topic/1/');
+
+  
+  socket.onopen = function(e) {
+      console.log('Chat socket opened');
+  };
+  socket.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    var message = data['message'];
+    console.log(message);
+};
+
+socket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+{% comment %} document.querySelector('#your-button-id').onclick = function(e) {
+    var messageInputDom = document.querySelector('#your-input-id');
+    var message = messageInputDom.value;
+    socket.send(JSON.stringify({
+        'message': message
+    }));
+} {% endcomment %}
 
   get_comments({{topic.id}});
   function get_comments(topic_id){
